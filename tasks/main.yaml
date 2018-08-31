@@ -1,0 +1,48 @@
+---
+
+- name: Test distribution
+  assert:
+    that: >
+      ansible_os_family in ['RedHat', 'Debian']
+
+- name: Add CA file
+  copy:
+    dest: "{{
+      item.dest_base | default(system_ca_redhat_dest_base) ~ '/' ~ item.subdir | default(system_ca_redhat_dest_subdir) ~ '/' ~ item.name
+        if ansible_os_family == 'RedHat'
+        else
+      item.dest_base | default(system_ca_debian_dest_base) ~ '/' ~ item.name }}.crt"
+    content: "{{ item.content }}"
+    owner: "{{ item.owner | default(system_ca_owner) }}"
+    group: "{{ item.group | default(system_ca_group) }}"
+    mode: "{{ item.mode | default(system_ca_mode) }}"
+    state: "{{ item.state | default(omit) }}"
+  when: >
+    'state' not in item or
+    item.state != 'absent'
+  loop: "{{ system_ca_certs }}"
+  register: system_ca_add_results
+
+- name: Remove CA file
+  file:
+    path: "{{
+      item.dest_base | default(system_ca_redhat_dest_base) ~ '/' ~ item.dest | default(system_ca_redhat_dest_subdir) ~ '/' ~ item.name
+        if ansible_os_family == 'RedHat'
+        else
+      item.dest_base | default(system_ca_debian_dest_base) ~ '/' ~ item.name }}.crt"
+    state: absent
+  when: >
+    'state' in item and
+    item.state == 'absent'
+  loop: "{{ system_ca_certs }}"
+  register: system_ca_remove_results
+
+- name: Run update-ca
+  shell: "{{
+    system_ca_redhat_update_cmd
+      if ansible_os_family == 'RedHat'
+      else
+    system_ca_debian_update_cmd }}"
+  when: >
+    system_ca_add_results.changed == true or
+    system_ca_remove_results.changed == true

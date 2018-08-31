@@ -1,0 +1,29 @@
+---
+
+# Base dir for RedHat CAs
+system_ca_redhat_dest_base: /etc/pki/ca-trust/source
+
+# Subdirectory in the /etc/pki/ca-trust/source
+# (set it to empty string to place files in /etc/pki/ca-trust/source)
+system_ca_redhat_dest_subdir: anchors
+
+# Base dir for Debian/Ubuntu CAs
+system_ca_debian_dest_base: /usr/local/share/ca-certificates
+
+# Default cert owner
+system_ca_owner: root
+
+# Default cert group
+system_ca_group: root
+
+# Defautl cert mode
+system_ca_mode: "0644"
+
+# Update command for RedHat
+system_ca_redhat_update_cmd: update-ca-trust extract
+
+# Update command for Debian/Ubuntu
+system_ca_debian_update_cmd: update-ca-certificates
+
+# List of certificates (see README for more details)
+system_ca_certs: []

@@ -1,0 +1,24 @@
+---
+
+galaxy_info:
+  author: Jiri Tyr
+  description: Role which helps to add/remove system CA certificates.
+  license: MIT
+  min_ansible_version: 2.6
+  platforms:
+    - name: EL
+      versions:
+        - 6
+        - 7
+    - name: Ubuntu
+      versions:
+        - trusty
+        - xenial
+        - bionic
+    - name: Debian
+      versions:
+        - jessie
+        - stretch
+  galaxy_tags:
+    - system
+dependencies: []
