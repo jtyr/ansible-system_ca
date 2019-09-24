@@ -3,13 +3,13 @@
 - name: Test distribution
   assert:
     that: >
-      ansible_os_family in ['RedHat', 'Debian']
+      ansible_facts.os_family in ['RedHat', 'Debian']
 
 - name: Add CA file
   copy:
     dest: "{{
       item.dest_base | default(system_ca_redhat_dest_base) ~ '/' ~ item.subdir | default(system_ca_redhat_dest_subdir) ~ '/' ~ item.name
-        if ansible_os_family == 'RedHat'
+        if ansible_facts.os_family == 'RedHat'
         else
       item.dest_base | default(system_ca_debian_dest_base) ~ '/' ~ item.name }}.crt"
     content: "{{ item.content }}"
@@ -27,7 +27,7 @@
   file:
     path: "{{
       item.dest_base | default(system_ca_redhat_dest_base) ~ '/' ~ item.dest | default(system_ca_redhat_dest_subdir) ~ '/' ~ item.name
-        if ansible_os_family == 'RedHat'
+        if ansible_facts.os_family == 'RedHat'
         else
       item.dest_base | default(system_ca_debian_dest_base) ~ '/' ~ item.name }}.crt"
     state: absent
@@ -40,7 +40,7 @@
 - name: Run update-ca
   shell: "{{
     system_ca_redhat_update_cmd
-      if ansible_os_family == 'RedHat'
+      if ansible_facts.os_family == 'RedHat'
       else
     system_ca_debian_update_cmd }}"
   when: >
